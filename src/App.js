@@ -61,10 +61,21 @@ const reduce = (currentState, action) => {
   if (action.type === "closeAccount") {
     return {
       ...currentState,
-      balance: 0,
-      loan: 0,
-      isActive: false,
-      closeAccount: true,
+      balance: currentState.balance === 0 ? 0 : currentState.balance,
+      loan: currentState.loan !== 0 ? currentState.loan : 0,
+      isActive:
+        currentState.balance === 0 && currentState.loan === 0 ? false : true,
+      closeAccount: currentState.isActive,
+    };
+  }
+
+  if (action.type === "withdraw") {
+    return {
+      ...currentState,
+      balance:
+        currentState.balance >= 50
+          ? currentState.balance - 50
+          : currentState.balance,
     };
   }
 };
@@ -102,6 +113,10 @@ export default function App() {
   const termiateAccount = () => {
     dispatch({ type: "closeAccount" });
   };
+
+  const widthdrawMoney = () => {
+    dispatch({ type: "withdraw" });
+  };
   return (
     <div className="App">
       <h1>useReducer Bank Account</h1>
@@ -125,7 +140,7 @@ export default function App() {
         </button>
       </p>
       <p>
-        <button onClick={() => {}} disabled={!isActive}>
+        <button onClick={widthdrawMoney} disabled={!isActive}>
           Withdraw 50
         </button>
       </p>
